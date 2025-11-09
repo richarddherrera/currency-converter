@@ -6,6 +6,8 @@
 
 import customtkinter
 
+from core.pegar_moedas import nomes_moedas, conversoes_disponiveis
+
 # Fontes
 font_title = ("Poppins", 20, "bold")
 font_label = ("Inter", 14)
@@ -18,22 +20,31 @@ customtkinter.set_default_color_theme("green") # Setar tema de cores dos element
 janela = customtkinter.CTk()
 janela.geometry("500x500")
 
+dic_conversoes_disponiveis = conversoes_disponiveis()
+
 # Criação dos botões, textos e os demais elementos
 titulo = customtkinter.CTkLabel(janela, text="💰 Conversor de Moedas 💰", font=font_title)
 texto_moeda_origem = customtkinter.CTkLabel(janela, text="Seleciona a moeda de origem", font=font_label)
-campo_moeda_origem = customtkinter.CTkOptionMenu(janela, values=["USD", "BRL", "EUR", "BTC"])
-
 texto_moeda_destino = customtkinter.CTkLabel(janela, text="Seleciona a moeda de destino", font=font_label)
-campo_moeda_destino = customtkinter.CTkOptionMenu(janela, values=["USD", "BRL", "EUR", "BTC"])
+
+def carregar_moedas_destino(moeda_selecionada):
+    lista_moedas_destino = dic_conversoes_disponiveis[moeda_selecionada]
+    campo_moeda_destino.configure(values=lista_moedas_destino)
+    campo_moeda_destino.set(lista_moedas_destino[0])
+
+campo_moeda_origem = customtkinter.CTkOptionMenu(janela, values=list(dic_conversoes_disponiveis.keys()), command= carregar_moedas_destino)
+
+campo_moeda_destino = customtkinter.CTkOptionMenu(janela, values=["Selecione uma moeda de origem"])
 
 def converter_moeda():
     print("Convertendo moeda...")
 botao_converter = customtkinter.CTkButton(janela, text="Converter",font=font_button, command=converter_moeda)
 
 lista_moedas = customtkinter.CTkScrollableFrame(janela)
-moedas_disponiveis = ["BRL: Real brasileiro", "USD: Dólar americano", "BTC: Bitcoin"]
-for moeda in moedas_disponiveis:
-    texto_moeda = customtkinter.CTkLabel(lista_moedas, text=moeda)
+moedas_disponiveis = nomes_moedas()
+for codigo_moeda in moedas_disponiveis:
+    nome_moeda = moedas_disponiveis[codigo_moeda]
+    texto_moeda = customtkinter.CTkLabel(lista_moedas, text=f"{codigo_moeda}: {nome_moeda}")
     texto_moeda.pack()
 
 
